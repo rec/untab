@@ -2,10 +2,11 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import os
-import sys
+import os, re, sys
 
-TAB_WIDTH = 8
+TAB_WIDTH = 4
+FILE_SUFFIXES = '.h', '.hpp', '.cpp'
+TAB_SPLIT = re.compile('\t').split
 
 def edit_file(fname, function):
     changed = False
@@ -28,9 +29,13 @@ def edit_files(root, suffixes, function):
                     if edit_file(fname, function):
                         print('Changed file', fname)
 
-def fix_whitespace(s):
-    return s.replace('\t', ' ' * TAB_WIDTH).rstrip() + '\n'
+def to_field(s):
+    return s + (TAB_WIDTH - len(s) % TAB_WIDTH) * ' '
+
+def fix_tab(s):
+    split = TAB_SPLIT(s)
+    return ''.join(to_field(i) for i in split).rstrip() + '\n'
 
 if __name__ == '__main__':
     root = sys.argv[1] if len(sys.argv) > 1 else os.getcwd()
-    edit_files(root, ['.h', '.cpp'], fix_whitespace)
+    edit_files(root, FILE_SUFFIXES, fix_tab)
