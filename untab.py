@@ -27,8 +27,11 @@ def edit_files(root, suffixes, function):
             for s in suffixes:
                 if f.endswith(s):
                     fname = os.path.join(dirpath, f)
-                    if edit_file(fname, function):
-                        print('Changed file', fname)
+                    try:
+                        if edit_file(fname, function):
+                            print('Changed file', fname)
+                    except:
+                        print('ERROR changing file', fname)
 
 def to_field(s):
     """Right-pad a string by spaces until its length is a multiple of TAB_WIDTH.
